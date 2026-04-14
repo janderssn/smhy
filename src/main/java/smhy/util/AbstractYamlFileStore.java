@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Slf4j
-public abstract class AbstractYamlFileStore<T> implements FileStore<T> {
+public abstract class AbstractYamlFileStore<T> {
 
     public void save(Path outputPath, Collection<T> collection) {
         if (collection.isEmpty()) {
