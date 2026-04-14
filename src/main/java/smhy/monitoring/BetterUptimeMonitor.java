@@ -1,7 +1,6 @@
 package smhy.monitoring;
 
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +21,6 @@ import static org.springframework.util.StringUtils.hasText;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class BetterUptimeMonitor {
 
     private final RestTemplate restTemplate;
@@ -32,10 +30,14 @@ public class BetterUptimeMonitor {
 
     @Autowired
     public BetterUptimeMonitor(RestTemplateBuilder builder) {
-        restTemplate = builder
+        this(builder
                 .connectTimeout(Duration.ofSeconds(5))
                 .readTimeout(Duration.ofSeconds(5))
-                .build();
+                .build());
+    }
+
+    BetterUptimeMonitor(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @PostConstruct
