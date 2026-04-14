@@ -8,7 +8,7 @@ import smhy.conditions.ForecastConditionService;
 import smhy.forecasts.ForecastService;
 import smhy.locations.ForecastLocationService;
 import smhy.monitoring.BetterUptimeMonitor;
-import smhy.reports.ReportService;
+import smhy.reports.ForecastReportGenerator;
 
 import java.nio.file.Paths;
 import java.util.List;
@@ -20,7 +20,7 @@ public class ConsoleApplicationService {
 
     private final ForecastService forecastService;
     private final BetterUptimeMonitor betterUptimeMonitor;
-    private final ReportService reportService;
+    private final ForecastReportGenerator forecastReportGenerator;
     private final ForecastLocationService forecastLocationService;
     private final ForecastConditionService forecastConditionService;
     private final JsonExportConfiguration jsonExportConfiguration;
@@ -54,12 +54,12 @@ public class ConsoleApplicationService {
         }
 
         if (args.containsOption("reports")) {
-            reportService.runAll(locations);
+            forecastReportGenerator.generate(locations);
         }
 
         if (args.containsOption("all")) {
             forecastService.runAll(locations);
-            reportService.runAll(locations);
+            forecastReportGenerator.generate(locations);
         }
 
         if (args.containsOption("heartbeat")) {
