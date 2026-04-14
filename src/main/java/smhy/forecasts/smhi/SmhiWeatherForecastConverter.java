@@ -2,7 +2,6 @@ package smhy.forecasts.smhi;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import smhy.forecasts.WeatherForecast;
 import org.springframework.core.convert.converter.Converter;
@@ -13,7 +12,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.stream.StreamSupport;
 
 
-@Slf4j
 @Component
 public class SmhiWeatherForecastConverter implements Converter<ObjectNode, WeatherForecast> {
 

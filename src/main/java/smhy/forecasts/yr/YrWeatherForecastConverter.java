@@ -3,7 +3,6 @@ package smhy.forecasts.yr;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import smhy.forecasts.WeatherForecast;
 import org.springframework.core.convert.converter.Converter;
@@ -17,7 +16,6 @@ import java.util.stream.StreamSupport;
 import static java.util.function.Predicate.not;
 
 
-@Slf4j
 @Component
 public class YrWeatherForecastConverter implements Converter<ObjectNode, WeatherForecast> {
 
