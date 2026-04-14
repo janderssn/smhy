@@ -18,18 +18,16 @@ SMHY collects forecasts from YR.no and throws away all the crappy weather and sh
 smhy.output.dir=/tmp/smhy
 smhy.config.dir=classpath:config
 smhy.assets.dir=classpath:assets/**
+smhy.json.enabled=true
 
 smhy.region=se/stockholm
 smhy.provider=yr
 
-smhy.provider.yr.useragent=MyWeatherApp/1.0 myemail@example.com
-smhy.provider.yr.url=https://api.met.no/weatherapi/locationforecast/2.0/complete?altitude={altitude}&lat={latitude}&lon={longitude}
+smhy.forecasts.yr.useragent=smhy/1.0 github.com/janderssn/smhy
+smhy.forecasts.yr.url=https://api.met.no/weatherapi/locationforecast/2.0/complete?altitude={altitude}&lat={latitude}&lon={longitude}
 
-smhy.provider.smhi.useragent=MyWeatherApp/1.0 myemail@example.com
-smhy.provider.smhi.url=https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/{longitude}/lat/{latitude}/data.json
-
-spring.data.mongodb.uri=mongodb://127.0.0.1:27017/smhy
-spring.data.mongodb.database=smhy
+smhy.forecasts.smhi.useragent=smhy/1.0 github.com/janderssn/smhy
+smhy.forecasts.smhi.url=https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/{longitude}/lat/{latitude}/data.json
 ```
 
 ### Locations
@@ -77,6 +75,5 @@ The following secrets need to be added in repository settings:
 ## Run locally
 
 ```bash
-docker run -dp 27017:27017 -v mongo:/data/db --name mongo --restart=always mongo
 java -jar target/*.jar --forecast --locations salanda alleberg
 ```

@@ -9,11 +9,10 @@ SMHY is a Spring Boot weather forecast application that collects forecasts from 
 ## Technology Stack
 
 - **Java 25** with Spring Boot 3.5.6
-- **MongoDB** for data persistence
 - **Maven** for build management
 - **Lombok 1.18.42** for reducing boilerplate
 - **Thymeleaf** for HTML templating
-- **Testcontainers** for integration testing
+- **MockServer** for integration testing
 
 ## Build and Test Commands
 
@@ -35,10 +34,6 @@ mvn test -Dtest=ForecastRatingServiceLocationTest#rateForecastSalanda
 
 ### Run Application Locally
 ```bash
-# Start MongoDB first
-docker run -dp 27017:27017 -v mongo:/data/db --name mongo --restart=always mongo
-
-# Run the application
 java -jar target/*.jar --forecast --locations salanda alleberg
 ```
 
@@ -69,13 +64,13 @@ java -jar target/*.jar --forecast --locations salanda alleberg
 2. **RateLimitedWeatherForecastProvider** wraps providers with rate limiting
 3. **ForecastRatingService** scores each forecast using conditions from `conditions.yml`
 4. **ReportService** generates HTML reports showing only favorable weather periods
-5. All data persists to MongoDB via Spring Data repositories
+5. Reports are written to the configured output directory
 
 ### Configuration System
 
 - **locations.yml** - Defines locations to monitor with coordinates, region, altitude, and associated paragliding takeoffs
 - **conditions.yml** - Defines scoring rules per location (wind direction/speed ranges, time windows, minimum duration)
-- **application.properties** - Spring configuration, MongoDB connection, API endpoints
+- **application.properties** - Spring configuration, API endpoints
 - **application-prod.properties** - Production overrides
 
 ### Provider Pattern
@@ -98,8 +93,7 @@ Multiple conditions can target the same location with different scores for diffe
 
 ## Testing
 
-- Tests use **Testcontainers** for MongoDB integration tests
-- **MockServer** for mocking external weather APIs
+- **MockServer** for mocking external weather APIs in integration tests
 - Test resources in `src/test/resources/` include sample API responses
 - Key test classes verify scoring logic against known conditions
 
@@ -116,7 +110,6 @@ Key properties to configure:
 - `smhy.output.dir` - Where generated HTML and JSON reports are written
 - `smhy.json.enabled` - Enable/disable JSON report generation (default: true)
 - `smhy.provider` - Weather provider to use (yr or smhi)
-- `spring.data.mongodb.uri` - MongoDB connection string
 - `smhy.forecasts.yr.useragent` - Required user agent for YR.no API
 - `betterstack.heartbeat.url` - Optional monitoring endpoint
 
