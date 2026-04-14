@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html  lang="sv-se">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+  <meta name="description" content="" class="og-meta">
+
+  <title th:text="${'SMHY - ' + #ctx.page}">Sverige</title>
+
+  <link href="assets/favicon-96x96.png" sizes="96x96" rel="icon" type="image/png">
+  <link href="assets/favicon-32x32.png" sizes="32x32" rel="icon" type="image/png">
+  <link href="assets/favicon-16x16.png" sizes="16x16" rel="icon" type="image/png">
+
+  <link rel="stylesheet" type="text/css" href="assets/smhy.css">
+</head>
+
+<body>
+
+  <svg height="0" width="0" aria-hidden="true">
+    <symbol id="icon-arrow"><path fill="currentColor" fill-rule="evenodd" d="M11.53 3l-.941 12.857L7 15l5.001 6L17 15l-3.587.857L12.471 3h-.941z" clip-rule="evenodd"></path></symbol>
+  </svg>
+
+  <svg id="temperatureGradDefs" class="nrk-sr" aria-hidden="true">
+    <defs>
+      <linearGradient id="temperatureGrad" x1="0" y1="0" x2="0" y2="1050" gradientUnits="userSpaceOnUse" spreadMethod="pad">
+        <stop offset="0" stop-color="#c60000" stop-opacity="1"></stop>
+        <stop offset="0.5" stop-color="#c60000" stop-opacity="1"></stop>
+        <stop offset="0.5" stop-color="#0077cc" stop-opacity="1"></stop>
+        <stop offset="1" stop-color="#0077cc" stop-opacity="1"></stop>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <svg id="windGradDefs" class="nrk-sr" aria-hidden="true">
+    <defs>
+      <linearGradient id="windGrad" x1="0" y1="0" x2="0" y2="700" gradientUnits="userSpaceOnUse" spreadMethod="pad">
+        <stop offset="0" stop-color="#26292a" stop-opacity="1"></stop>
+        <stop offset="1" stop-color="#26292a" stop-opacity="1"></stop>
+      </linearGradient>
+    </defs>
+  </svg>
+
+
+  <div id="app-root">
+    <div class="root">
+      <div class="app">
+        <div class="app__main">
+          <div class="page">
+            <div class="page__header">
+              
+              
+              <div class="layout-container">
+                
+                <div class="page__served-by">
+                  <div class="served-by">
+                    <p class="served-by__text">En tjänst från <a style="text-decoration:underline;" href="https://hangflyg.se">Stockholms Hängflygklubb</a></p>
+                  </div>
+                </div>
+
+                <header class="page-header" style="--search-input-position-right:0px">
+                  <a id="yr-logo" aria-label="Hjem" class="page-header__logo" href="https://smhy.se" tabindex="0">
+                    <span class="smhy-logo">SMHY</span>
+                  </a>
+
+                  <div class="page-header__location">
+                    <h1 class="page-header__location-header" tabindex="-1" id="location-heading"><span class="page-header__location-name" th:text="${#ctx.forecast.forecastLocation}">Sverige</span>
+                      <svg class="page-header__location-star page-header__location-star--filled" x="0" y="0" width="16" height="16" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                        <use xlink:href="#icon-star-filled" x="0" y="0" width="24" height="24"></use>
+                      </svg></h1><span class="page-header__location-details" role="text">
+                    <span>Väderöversikt för populära hängflygställen i Sverige</span></span>
+                  </div>
+
+                </header>
+
+              </div>
+
+              <nav class="location-header" id="locationHeader" role="navigation">
+                <div class="layout-container">
+
+                  <div class="location-header__content">
+
+                    <ol class="location-header__list" id="location-header__list">
+                      <li class="location-header__menu-item" tabindex="-1"><a class="location-header__menu-link" href="index.html" th:attrappend="aria-current=${#ctx.page == 'Vecka'}?'page'">
+                          <div class="location-header__menu-item-text"><span class="location-header__active-menu-label">Vecka</span><span class="location-header__inactive-menu-label">Vecka</span></div>
+                        </a>
+                      </li>
+                        <li class="location-header__menu-item" tabindex="-1"><a class="location-header__menu-link" href="helg.html" th:attrappend="aria-current=${#ctx.page == 'Helg'}?'page'">
+                            <div class="location-header__menu-item-text"><span class="location-header__active-menu-label">Helg</span><span class="location-header__inactive-menu-label">Helg</span></div></a>
+                        </li>
+                        <li class="location-header__menu-item" tabindex="-1"><a class="location-header__menu-link" href="stockholm.html" th:attrappend="aria-current=${#ctx.page == 'Stockholm'}?'page'">
+                            <div class="location-header__menu-item-text"><span class="location-header__active-menu-label">Stockholm</span><span class="location-header__inactive-menu-label">Stockholm</span></div></a>
+                        </li>
+                        <li class="location-header__menu-item" tabindex="-1"><a class="location-header__menu-link" href="favoriter.html" th:attrappend="aria-current=${#ctx.page == 'Favoriter'}?'page'">
+                            <div class="location-header__menu-item-text"><span class="location-header__active-menu-label">Favoriter</span><span class="location-header__inactive-menu-label">Favoriter</span></div></a>
+                        </li>
+                    </ol>
+
+                  </div>
+                </div>
+              </nav>
+
+            </div>
+
+            <div class="page__main">
+              <main class="page-root">
+                <div id="page-content" class="page-root__content details-page" aria-hidden="false">
+                  <div class="details-page">
+
+
+                    <div class="details-page__tab-content">
+                      <div class="layout-container layout-container--with-padding">
+                        <div class="details-page__table" id="details-page__table" >
+                          <div class="details-page__table">
+
+<!-- START -->
+<div th:each="ratingByDate : ${#ctx.ratingsByDate}">
+
+                            <h2 th:text="${ratingByDate.key}" class="details-page__day-heading">Idag 14. december</h2>
+                            <div class="hourly-weather-table">
+                              <div class="fluid-table">
+                                <div class="fluid-table__scroll-shadow-left" style="left: 37px;">
+                                  <div class="scroll-shadow scroll-shadow--left" data-visible="false"></div>
+                                </div>
+                                <div class="fluid-table__scroll-shadow-right">
+                                  <div class="scroll-shadow scroll-shadow--right" data-visible="false"></div>
+                                </div>
+                                <div class="fluid-table__scroll-container">
+                                  <table class="fluid-table__table">
+                                    <caption class="fluid-table__caption"></caption>
+                                    
+                                    <thead>
+                                      <tr>
+                                        <!-- <th class="fluid-table__cell fluid-table__cell--heading fluid-table__cell--align-left fluid-table__cell--sticky"> -->
+                                        <th class="fluid-table__cell fluid-table__cell--heading fluid-table__cell--align-left">
+                                          <span class="fluid-table__cell-content"><span>Plats</span> </span>
+                                        </th>
+
+                                        <th class="fluid-table__cell fluid-table__cell--heading fluid-table__cell--align-left ">
+                                          <span class="fluid-table__cell-content"><span>Tid</span> </span>
+                                        </th>
+                                       
+                                        <th class="fluid-table__cell fluid-table__cell--heading fluid-table__cell--align-right">
+                                          <span class="fluid-table__cell-content"><span>Vind(byar) m/s</span> </span>
+                                        </th>
+
+                                        <th class="fluid-table__cell fluid-table__cell--heading fluid-table__cell--align-center">
+                                          <span class="fluid-table__cell-content"><span>Betyg</span> </span>
+                                        </th>
+
+                                        <th class="fluid-table__cell fluid-table__cell--heading fluid-table__cell--align-right">
+                                          <span class="fluid-table__cell-content"><span><abbr title="Temperatur">Temp.</abbr></span> </span>
+                                        </th>
+                                        <th class="fluid-table__cell fluid-table__cell--heading fluid-table__cell--align-right">
+                                          <span class="fluid-table__cell-content"><span><abbr title="Duggpunkt">Daggpkt.</abbr></span> </span>
+                                        </th>
+
+                                        <th class="fluid-table__cell fluid-table__cell--heading fluid-table__cell--align-right">
+                                          <span class="fluid-table__cell-content"><span>Nedbörd mm</span> </span>
+                                        </th>
+                                        <th class="hourly-weather-table__cloud fluid-table__cell fluid-table__cell fluid-table__cell--heading fluid-table__cell--align-right">
+                                          <span class="fluid-table__cell-content"><span><abbr title="Sjanse for nedbør %">Nedbördchans %</abbr></span> </span>
+                                        </th>
+                                        <th class="hourly-weather-table__cloud fluid-table__cell fluid-table__cell fluid-table__cell--heading fluid-table__cell--align-right">
+                                          <span class="fluid-table__cell-content"><span>Tryck hPa</span> </span>
+                                        </th>
+                                        <th class="hourly-weather-table__cloud fluid-table__cell fluid-table__cell fluid-table__cell--heading fluid-table__cell--align-right">
+                                          <span class="fluid-table__cell-content"><span>Luftfuktighet %</span> </span>
+                                        </th>
+                                      </tr>
+                                    </thead>
+
+                                    <tbody>
+
+<!-- row -->
+<tr th:each="rating : ${ratingByDate.ratings}" class="fluid-table__row">
+
+                                        <td class="fluid-table__cell fluid-table__cell--align-left " width="150px">
+                                          <span class="fluid-table__cell-content" style="width:150px"><span>
+                                            <span th:text="${rating.name}" class="hourly-weather-table__time" >Granholmstoppen</span>
+                                          </span></span>
+                                        </td>
+
+                                        <td class="fluid-table__cell fluid-table__cell--align-left">
+                                        <!--<td class="fluid-table__cell fluid-table__cell--align-left fluid-table__cell--sticky">-->                                        
+                                          <span class="fluid-table__cell-content"><span>
+                                            <span th:text="${#numbers.formatInteger(rating.timeOfDayMin,2) + '-' + #numbers.formatInteger(rating.timeOfDayMax,2)}" class="hourly-weather-table__time">08-18</span>
+                                          </span></span>
+                                        </td>
+                                        
+
+                                        <td class="fluid-table__cell fluid-table__cell--align-right"><span class="fluid-table__cell-content"><span>
+                                          <span class="wind wind--display-arrow location-weather-table__wind-value">
+                                          <span class="wind__container" role="text" aria-hidden="true">
+                                            <span th:text="${#numbers.formatInteger(rating.windSpeedMax,0)}" class="wind__value">2</span>
+                                            <span th:text="${'(' + #numbers.formatInteger(rating.windGustMax,0) + ')'}" class="wind__gust"> (5)</span>
+                                                  <div class="wind__arrow">
+                                                    <div class="wind-arrow" aria-hidden="true">
+                                                      <div class="wind-arrow__arrow" th:attr="style=${'transform: translate(-50%, -50%) rotate('+ rating.windDirectionMax + 'deg);'}" style="transform: translate(-50%, -50%) rotate(335deg);">
+                                                        <svg x="0" y="0" width="24" height="24" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                                                          <use xlink:href="#icon-arrow" x="0" y="0" width="24" height="24"></use>
+                                                        </svg></div>
+                                                    </div>
+                                                  </div>
+                                                </span>
+                                              </span>
+                                            </span>
+                                          </span>
+                                        </td>
+
+                                        <td class="fluid-table__cell fluid-table__cell--align-center">
+                                          <span class="fluid-table__cell-content">
+                                            <span>
+                                              <span class="fluid-table__cell--align-center">
+                                                <div class="weather-symbol"><img class="weather-symbol__img" th:attr="src=${'assets/' + #numbers.formatInteger(rating.score/10,0) + '.png'}" alt="" width="25px" height="25px"></div>
+                                              </span>
+                                            </span>
+                                          </span>
+                                        </td>
+
+                                        <td class="fluid-table__cell fluid-table__cell--align-right"><span class="fluid-table__cell-content"><span>
+                                          <span th:text="${#numbers.formatInteger(rating.airTemperatureMax,0)}" th:class="${rating.airTemperatureMax>0}? 'temperature temperature--warm' : 'temperature temperature--cold'" role="text">-7<span class="temperature__degree" title="grader celsius" aria-label="grader celsius">°</span></span>
+                                        </span></span></td>
+                                        <td class="fluid-table__cell fluid-table__cell--align-right"><span class="fluid-table__cell-content"><span>
+                                          <span th:text="${#numbers.formatInteger(rating.dewPointTemperatureMax,0)}" th:class="${rating.dewPointTemperatureMax>0}? 'temperature temperature--warm' : 'temperature temperature--cold'" role="text">-7<span class="temperature__degree" title="grader celsius" aria-label="grader celsius">°</span></span>
+                                        </span></span></td>
+                                        
+                                        <td class="fluid-table__cell fluid-table__cell--align-right"><span class="fluid-table__cell-content"><span>
+                                              <div class="min-max-precipitation" role="text"><span class="nrk-sr"></span>
+                                                <div aria-hidden="true"><span class="precipitation precipitation--color" role="text"><span class="precipitation__value" th:text="${#numbers.formatInteger(rating.precipitationAmountMax,0)}">0</span></span><span class="min-max-precipitation__dash" aria-hidden="true">–</span><span class="precipitation precipitation--color" role="text"><span class="precipitation__value" th:text="${#numbers.formatInteger(rating.precipitationAmountMax,0)}">0,2</span></span></div>
+                                              </div>
+                                        </span></span></td>
+
+                                        <td class="hourly-weather-table__cloud fluid-table__cell fluid-table__cell fluid-table__cell--align-right"><span class="fluid-table__cell-content"><span><span th:text="${#numbers.formatInteger(rating.probabilityPrecipitationMax,0)}"></span></span></span></td>
+                                        <td class="hourly-weather-table__cloud fluid-table__cell fluid-table__cell fluid-table__cell--align-right"><span class="fluid-table__cell-content"><span th:text="${#numbers.formatInteger(rating.airPressureMax,0)}" >998</span></span></td>
+                                        <td class="hourly-weather-table__cloud fluid-table__cell fluid-table__cell fluid-table__cell--align-right"><span class="fluid-table__cell-content"><span th:text="${#numbers.formatInteger(rating.relativeHumidityMax,0)}" >86</span></span></td>
+                                        </tr>
+                                    </tbody>
+                                  </table>
+
+                          </div>
+                        </div>
+                      </div>
+                      
+                    </div>
+                  </div>
+                </div>
+
+                        <div class="forecast-page__footer"><div class="last-updated" role="text">
+                            <span class="last-updated__text">Uppdaterad <time th:text="${#temporals.format(forecastDateCET,'HH:mm')}">20:39</time>.</span>
+                            <a class="last-updated__link" href="https://hjelp.yr.no/hc/en-us/articles/360014549074-Updating-frequency-" target="_blank" rel="noopener">Hur ofta uppdateras väderprognosen?</a>
+                        </div>
+
+                            <div class="last-updated" role="text">Väderdata hämtad från YR.no <a class="last-updated__link" href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></div>
+
+                            <!--
+                            <div class="forecast-page__save-as">
+                                <a target="_blank" class="save-as" href="https://www.yr.no/en/print/forecast/2-2666041/Sweden/Stockholm/Botkyrka%20Municipality/Uttran"><svg class="save-as__icon" x="0" y="0" width="24" height="24" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><use xlink:href="#icon-file-pdf" x="0" y="0" width="24" height="24"></use></svg>Forecast as PDF</a>
+                                <a target="_blank" class="save-as" href="https://www.yr.no/en/content/2-2666041/meteogram.svg"><svg class="save-as__icon" x="0" y="0" width="24" height="24" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><use xlink:href="#icon-widget" x="0" y="0" width="24" height="24"></use></svg>Forecast as SVG</a></div>
+                            </div>
+                            -->
+                      </div>
+          </div>
+        </div>
+        
+      </div>
+              </main>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

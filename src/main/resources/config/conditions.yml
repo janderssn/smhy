@@ -1,0 +1,323 @@
+- id: alleberg-good
+  location: alleberg
+  daysOfWeek: []
+  hoursMin: null
+  monthsOfYear: []
+  score: 100.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [ WNW, NW ]
+  windGustMax: 11.0
+  windSpeedMax: 6.0
+  windSpeedMin: 5.0
+- id: alleberg-ok
+  location: alleberg
+  daysOfWeek: []
+  hoursMin: null
+  monthsOfYear: []
+  score: 50.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [ WSW, W, WNW, NW, NNW ]
+  windGustMax: 12.0
+  windSpeedMax: 7.0
+  windSpeedMin: 4.0
+- id: alleberg-east-good
+  location: alleberg
+  score: 100.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [ ENE, E, ESE ]
+  windGustMax: 11.0
+  windSpeedMax: 6.0
+  windSpeedMin: 5.0
+- id: alleberg-east-ok
+  location: alleberg
+  score: 25.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [ NE, ENE, E, ESE ]
+  windGustMax: 12.0
+  windSpeedMax: 7.0
+  windSpeedMin: 4.0
+- id: brahehus-good
+  location: brahehus
+  score: 100.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [ W, WNW, NW ]
+  windGustMax: 9.0
+  windSpeedMax: 5.0
+  windSpeedMin: 4.0
+- id: salanda-perfect
+  location: salanda
+  score: 100.0
+  timeOfDayMax: 16
+  timeOfDayMin: 10
+  windDirections: [NW,NNW,SSE,SE]
+  monthsOfYear: [4,5,6,7,8,9]
+  windGustMax: 7.0
+  windSpeedMax: 4.0
+  windSpeedMin: 3.0
+- id: salanda-good
+  location: salanda
+  score: 80.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [NW,NNW,N,S,SSE,SE]
+  windGustMax: 7.0
+  windSpeedMax: 5.0
+  windSpeedMin: 1.0
+- id: salanda-ok
+  location: salanda
+  score: 50.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [NW,NNW,N,NNE,NE,SSW,S,SSE,SE]
+  windGustMax: 7.0
+  windSpeedMax: 5.0
+  windSpeedMin: 1.0
+- id: kaseberga-good
+  location: kaseberga
+  score: 100.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [ S, SSW, SW ]
+  windGustMax: 12.0
+  windSpeedMax: 8.0
+  windSpeedMin: 6.0
+- id: kaseberga-ok
+  location: kaseberga
+  score: 50.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [ S, SSE, SSW, SW, WSW ]
+  windGustMax: 12.0
+  windSpeedMax: 9.0
+  windSpeedMin: 5.0
+- id: granholmstoppen-good
+  location: granholmstoppen
+  score: 100.0
+  timeOfDayMin: 6
+  timeOfDayMax: 20
+  windDirections: [ N, NNE, NE, ENE, E ]
+  windGustMax: 7.0
+  windSpeedMax: 4.0
+  windSpeedMin: 2.0
+- id: uttran-good
+  location: uttran
+  score: 100.0
+  timeOfDayMin: 6
+  timeOfDayMax: 20
+  windDirections: [ S, SSW ]
+  windGustMax: 7.0
+  windSpeedMax: 4.0
+  windSpeedMin: 2.0
+- id: uttran-ok
+  location: uttran
+  score: 20.0
+  timeOfDayMin: 6
+  timeOfDayMax: 20
+  windDirections: [ N, NNE, NE, ENE, E, ESE, SE, SSE, S, SSW, SW, WSW, W, WNW, NW, NNW ]
+  windGustMax: 2.0
+  windSpeedMax: 1.0
+  windSpeedMin: 0.0
+- id: lovsta-good
+  location: lovsta
+  score: 100.0
+  timeOfDayMin: 6
+  timeOfDayMax: 20
+  windDirections: [ S, SSW ]
+  windGustMax: 6.0
+  windSpeedMax: 4.0
+  windSpeedMin: 1.0
+- id: lovsta-ok
+  location: lovsta
+  score: 30.0
+  timeOfDayMin: 6
+  timeOfDayMax: 20
+  windDirections: [ SSE, S, SSW ]
+  windGustMax: 8.0
+  windSpeedMax: 5.0
+  windSpeedMin: 0.0
+- id: lovsta-poor
+  location: lovsta
+  score: 20.0
+  timeOfDayMin: 6
+  timeOfDayMax: 20
+  windDirections: [ N, NNE, NE, ENE, E, ESE, SE, SSE, S, SSW, SW, WSW, W, WNW, NW, NNW ]
+  windGustMax: 2.0
+  windSpeedMax: 1.0
+  windSpeedMin: 0.0
+- id: areskutan-south-good
+  location: areskutan
+  score: 90.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [SSW,S,SSE,SE]
+  windGustMax: 8.0
+  windSpeedMax: 5.0
+  windSpeedMin: 1.0
+- id: areskutan-north-good
+  location: areskutan
+  score: 90.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [NW]
+  monthsOfYear: [ 12,1,2,3,4 ]
+  windGustMax: 8.0
+  windSpeedMax: 5.0
+  windSpeedMin: 3.0
+- id: areskutan-north-ok
+  location: areskutan
+  score: 50.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [SW,WSW,W,WNW,NW,NNW]
+  monthsOfYear: [ 12,1,2,3,4 ]
+  windGustMax: 8.0
+  windSpeedMax: 5.0
+  windSpeedMin: 0.0
+- id: tossebergsklatten-good
+  location: tossebergsklatten
+  score: 100.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [ SSW, SW, WSW ]
+  windGustMax: 9.0
+  windSpeedMax: 6.0
+  windSpeedMin: 4.0
+- id: hovshallar-good
+  location: hovshallar
+  score: 90.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [NW]
+  windGustMax: 12.0
+  windSpeedMax: 9.0
+  windSpeedMin: 7.0
+- id: hovshallar-ok
+  location: hovshallar
+  score: 50.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [NNW,NW,WNW]
+  windGustMax: 12.0
+  windSpeedMax: 10.0
+  windSpeedMin: 6.0
+- id: skanesfagerhult-good
+  location: skanesfagerhult
+  score: 100.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [ N, NNE, NE, ENE, E, ESE, SE, SSE, S, SSW, SW, WSW, W ]
+  windGustMax: 6.0
+  windSpeedMax: 3.0
+  windSpeedMin: 0.0
+  daysOfWeek: [6, 7]
+  monthsOfYear: [4, 5, 6, 7, 8, 9]
+- id: morvikshummeln-good
+  location: morvikshummeln
+  score: 100.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [ E, ESE, SE, SSE, S, SSW, SW, WSW, W ]
+  windGustMax: 8.0
+  windSpeedMax: 5.0
+  windSpeedMin: 0.0
+- id: brahehus-ok
+  location: brahehus
+  score: 25.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [ WSW, W, WNW, NW, NNW ]
+  windGustMax: 10.0
+  windSpeedMax: 6.0
+  windSpeedMin: 3.0
+- id: granholmstoppen-ok
+  location: granholmstoppen
+  score: 50.0
+  timeOfDayMin: 6
+  timeOfDayMax: 20
+  windDirections: [ N, NNE, NE, ENE, E ]
+  windGustMax: 8.0
+  windSpeedMax: 5.0
+  windSpeedMin: 0.0
+- id: hamra-good
+  location: hamra
+  score: 100.0
+  timeOfDayMin: 6
+  timeOfDayMax: 20
+  windDirections: [ NNW, N ]
+  windGustMax: 7.0
+  windSpeedMax: 4.0
+  windSpeedMin: 2.0
+- id: klovberget-good
+  location: klovberget
+  score: 100.0
+  timeOfDayMin: 10
+  timeOfDayMax: 16
+  windDirections: [ WSW, SW ]
+  windGustMax: 9.0
+  windSpeedMax: 5.0
+  windSpeedMin: 4.0
+  monthsOfYear: [1, 2, 3, 12]
+- id: klovberget-ok
+  location: klovberget
+  monthsOfYear: [1, 2, 3, 12]
+  score: 25.0
+  timeOfDayMin: 10
+  timeOfDayMax: 16
+  windDirections: [ WNW, W, WSW, SW, SSW ]
+  windGustMax: 10.0
+  windSpeedMax: 6.0
+  windSpeedMin: 3.0
+- id: ullna-good
+  location: ullna
+  score: 100.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [ N, NNE ]
+  windGustMax: 9.0
+  windSpeedMax: 5.0
+  windSpeedMin: 4.0
+  monthsOfYear: [1, 2, 3, 12]
+- id: ullna-ok
+  location: ullna
+  score: 25.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [ NW, NNW, N, NNE, NE ]
+  windGustMax: 10.0
+  windSpeedMax: 6.0
+  windSpeedMin: 3.0
+  monthsOfYear: [1, 2, 3, 12]
+- id: svansjoklappen-perfect
+  location: svansjoklappen
+  score: 100.0
+  timeOfDayMax: 16
+  timeOfDayMin: 10
+  windDirections: [SW]
+  monthsOfYear: [4,5,6,7,8,9]
+  windGustMax: 8.0
+  windSpeedMax: 5.0
+  windSpeedMin: 5.0
+- id: svansjoklappen-good
+  location: svansjoklappen
+  score: 70.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [SW]
+  windGustMax: 9.0
+  windSpeedMax: 6.0
+  windSpeedMin: 4.0
+- id: svansjoklappen-ok
+  location: svansjoklappen
+  score: 50.0
+  timeOfDayMin: 10
+  timeOfDayMax: 18
+  windDirections: [WSW,SW,SSW]
+  monthsOfYear: [1,2,3]
+  windGustMax: 9.0
+  windSpeedMax: 6.0
+  windSpeedMin: 0.0

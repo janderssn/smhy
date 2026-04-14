@@ -1,0 +1,19 @@
+- {id: are, name: 'Åre', station: 'holfuy:1230', latitude: '63.39911', longitude: '13.07995', altitude: '379', region: 'se/jämtland',takeoffs:[7180]}
+- {id: areskutan, name: 'Åreskutan', station: 'holfuy:302', latitude: '63.4327', longitude: '13.09236', altitude: '1420', region: 'se/jämtland',takeoffs:[432,5118,6390,6015,6200,5581,1883,4795,433,434,3382,5739,1474,5292,566,431,432,6031,5579]}
+- {id: morvikshummeln, name: 'Mörvikshummeln', latitude: '63.41667', longitude: '13.06667', altitude: '1050', region: 'se/jämtland',takeoffs:[438]}
+- {id: skanesfagerhult, name: 'Skånes-Fagerhult', latitude: '56.37025', longitude: '13.45287', altitude: '126', region: 'se/skåne',takeoffs:[2915]}
+- {id: tossebergsklatten, name: 'Tossebergsklätten', station: 'holfuy:359', latitude: '59.98333', longitude: '13.08333', altitude: '291', region: 'se/värmland',takeoffs:[638]}
+- {id: hovshallar, name: 'Hovs Hallar', station: 'holfuy:127', latitude: '56.46667', longitude: '12.7', altitude: '8', region: 'se/skåne',takeoffs:[1512]}
+- {id: granholmstoppen, name: 'Granholmstoppen', latitude: '59.4', longitude: '17.86667', altitude: '34', region: 'se/stockholm',takeoffs:[539]}
+- {id: uttran, name: 'Uttran', latitude: '59.2', longitude: '17.8', altitude: '48', region: 'se/stockholm',takeoffs:[7737]}
+- {id: lovsta, name: 'Lövsta', latitude: '59.37204', longitude: '17.82635', altitude: '36', region: 'se/stockholm',takeoffs:[6906]}
+- {id: hamra, name: 'Hamra', latitude: '59.19048', longitude: '17.89634', altitude: '100', region: 'se/stockholm',takeoffs:[6817]}
+- {id: klovberget, name: 'Klövberget', latitude: '59.21338', longitude: '18.35462', altitude: '100', region: 'se/stockholm',takeoffs:[425]}
+- {id: svansjoklappen, name: 'Svansjökläppen', latitude: '62.56647', longitude: '12.17771', altitude: '125', region: 'se/härjedalen',takeoffs:[1882]}
+- {id: alleberg, name: 'Ålleberg', station: 'holfuy:258', latitude: '58.13333', longitude: '13.6', altitude: '330', region: 'se/jönköping', takeoffs:[2037,478,479,1052],favorite: yes}
+- {id: salanda, name: 'Salanda', station: 'smhi:96560', latitude: '59.91993', longitude: '16.60655', altitude: '62', region: 'se/stockholm',takeoffs:[1486]}
+- {id: brahehus, name: 'Brahehus', station: 'holfuy:397', latitude: '58.05', longitude: '14.5', altitude: '167', region: 'se/jönköping', takeoffs:[422,6842], favorite: yes}
+- {id: kaseberga, name: 'Kåseberga', station: 'holfuy:214', latitude: '55.38333', longitude: '14.06667', altitude: '0', region: 'se/skåne', takeoffs:[419,6412,420,9634,3342], favorite: yes}
+- {id: ullna, name: 'Ullna', latitude: '59.47063', longitude: '18.14203', altitude: '58', region: 'se/stockholm',takeoffs:[3991,6237]}
+- {id: satra, name: 'Sätra', latitude: '59.28727', longitude: '17.89229', altitude: '36', region: 'se/stockholm',takeoffs:[3169]}
+- {id: brunstorp, name: 'Brunstorp', station: 'holfuy:273', latitude: '57.76667', longitude: '14.35', altitude: '218', region: 'se/jönköping',takeoffs:[469]}
