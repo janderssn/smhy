@@ -23,7 +23,7 @@ public class RateLimitedWeatherForecastProvider implements WeatherForecastProvid
     private static final double REQUESTS_PER_SECOND = 1.0;
     private static final RateLimiter rateLimiter = RateLimiter.create(REQUESTS_PER_SECOND);
 
-    private final RestApiWeatherForecastProvider weatherForecastProvider;
+    private final WeatherForecastProvider weatherForecastProvider;
     private final InMemoryForecastStore forecastStore;
 
     public String getProvider() {

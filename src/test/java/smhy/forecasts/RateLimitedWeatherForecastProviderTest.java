@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 class RateLimitedWeatherForecastProviderTest {
 
     @Mock
-    private RestApiWeatherForecastProvider wrappedProvider;
+    private WeatherForecastProvider wrappedProvider;
 
     @Mock
     private InMemoryForecastStore forecastStore;

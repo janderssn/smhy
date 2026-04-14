@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import smhy.forecasts.AbstractWeatherForecastProvider;
-import smhy.forecasts.RestApiWeatherForecastProvider;
 import smhy.locations.ForecastLocation;
 import smhy.forecasts.WeatherForecast;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.time.Instant;
 import java.util.Optional;
 
 import static org.springframework.util.StringUtils.hasText;
@@ -25,9 +23,7 @@ import static org.springframework.util.StringUtils.hasText;
 @Slf4j
 @Service("yr")
 @ConditionalOnProperty(name = "smhy.provider", havingValue = "yr", matchIfMissing = true)
-public class YrWeatherForecastProvider
-        extends AbstractWeatherForecastProvider
-        implements RestApiWeatherForecastProvider {
+public class YrWeatherForecastProvider extends AbstractWeatherForecastProvider {
 
     private final RestTemplate restTemplate;
     private final YrWeatherForecastConverter converter;
@@ -79,10 +75,4 @@ public class YrWeatherForecastProvider
         return Optional.of(weatherForecast);
     }
 
-    private Instant expiresAsDate(long value) {
-        if (value > 0) {
-            return Instant.ofEpochMilli(value);
-        }
-        return Instant.now();
-    }
 }
