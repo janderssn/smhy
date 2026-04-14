@@ -3,7 +3,6 @@ package smhy.reports;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.PathResource;
@@ -24,13 +23,19 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class ForecastReportJsonGenerator {
 
     private final ForecastLocationService forecastLocationService;
     private final InMemoryForecastStore forecastStore;
-    private final ObjectMapper objectMapper;
     private final smhy.JsonExportConfiguration jsonExportConfiguration;
+
+    public ForecastReportJsonGenerator(ForecastLocationService forecastLocationService,
+                                       InMemoryForecastStore forecastStore,
+                                       smhy.JsonExportConfiguration jsonExportConfiguration) {
+        this.forecastLocationService = forecastLocationService;
+        this.forecastStore = forecastStore;
+        this.jsonExportConfiguration = jsonExportConfiguration;
+    }
 
     @Value("${smhy.output.dir}")
     private PathResource jsonOutputDirectory;
