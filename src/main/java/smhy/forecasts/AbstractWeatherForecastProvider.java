@@ -2,6 +2,7 @@ package smhy.forecasts;
 
 import org.shredzone.commons.suncalc.SunTimes;
 
+import java.time.Instant;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
@@ -21,6 +22,13 @@ public abstract class AbstractWeatherForecastProvider implements WeatherForecast
 
         forecast.setSunrise(LocalTime.from(parameters.getRise()));
         forecast.setSunset(LocalTime.from(parameters.getSet()));
+    }
+
+    protected Instant expiresAsDate(long value) {
+        if (value > 0) {
+            return Instant.ofEpochMilli(value);
+        }
+        return Instant.now();
     }
 
 }
