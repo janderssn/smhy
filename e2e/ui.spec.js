@@ -16,8 +16,9 @@ async function assertRealDashboard(page) {
   expect(dash.days).toHaveLength(10);
   expect(dash.sites.length).toBeGreaterThan(5);
   expect(dash.defaultFavorites).toEqual(expect.arrayContaining(["areskutan", "alleberg", "kaseberga"]));
-  const coming = (dash.sources || []).filter((source) => source.status !== "live").map((source) => source.id);
-  expect(coming).toEqual(expect.arrayContaining(["smhi", "open-meteo", "holfuy"]));
+  expect((dash.sources || []).map((source) => source.id)).toEqual(["yr"]);
+  expect(dash.sources[0].status).toBe("live");
+  expect((dash.sites || []).every((site) => site.holfuy == null)).toBe(true);
   return dash;
 }
 
@@ -27,8 +28,11 @@ test("week view at this viewport uses the generated forecast", async ({ page }, 
   await assertRealDashboard(page);
 
   const text = await page.locator("body").innerText();
-  expect(text).toContain("kommande");
   expect(text).toContain("yr.no");
+  expect(text).not.toContain("Open-Meteo");
+  expect(text).not.toContain("Holfuy");
+  expect(text).not.toContain("SMHI");
+  expect(text).not.toContain("AI-sammanfattning");
   expect(text).not.toContain("Sammanvägt");
   expect(text).not.toContain("Svag nordostlig");
   expect(text).toMatch(/PLATSER/);
@@ -55,7 +59,8 @@ test("week view at this viewport uses the generated forecast", async ({ page }, 
   if (testInfo.project.name === "mobile-390") {
     await expect(page.locator("#inspector")).toHaveClass(/open/);
   }
-  await expect(page.locator("#inspector")).toContainText("kommande");
+  await expect(page.locator("#inspector")).toContainText("Timme för timme");
+  await expect(page.locator("#inspector")).not.toContainText("kommande");
   await expect(page.locator("#inspector")).not.toContainText("Sammanvägt");
   await page.screenshot({ path: path.join(proof, `${testInfo.project.name}-detail.png`) });
 });

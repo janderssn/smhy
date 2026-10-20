@@ -10,8 +10,7 @@ import java.util.List;
 
 /**
  * JSON document consumed by the web UI and intended for a future native client.
- * Schema 1. Numbers come from the active forecast provider only. Sources with
- * {@code status: coming} have no weather values.
+ * Schema 1. Numbers come from the active forecast provider only.
  */
 @Data
 @Builder
@@ -41,7 +40,7 @@ public class Dashboard {
     public static class Source {
         private String id;
         private String name;
-        /** {@code live} or {@code coming}. */
+        /** {@code live} for the provider that supplied the numbers. */
         private String status;
         private String kind;
         private String url;
@@ -79,7 +78,6 @@ public class Dashboard {
         private double latitude;
         private double longitude;
         private int altitude;
-        private Integer holfuy;
         private Launch launch;
         private List<Sun> sun;
         private List<Window> windows;

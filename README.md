@@ -87,7 +87,7 @@ java -jar target/*.jar --all
 python3 -m http.server 8080 --directory /tmp/smhy
 ```
 
-`index.html` is the week, `helg.html` the weekend, `favoriter.html` favourites, and `stockholm.html` the configured region. The page reads `dashboard.json` (schema 1) beside it. SMHI, Open-Meteo and Holfuy are listed as coming and have no numbers.
+`index.html` is the week, `helg.html` the weekend, `favoriter.html` favourites, and `stockholm.html` the configured region. The page reads `dashboard.json` (schema 1) beside it. The dashboard lists only the provider that supplied the numbers (`yr.no` unless `smhy.provider=smhi`).
 
 ### Checks
 

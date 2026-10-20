@@ -1,6 +1,5 @@
 /* SMHY dashboard UI. Reads dashboard.json (schema 1) generated next to this page.
-   Hours and windows are the active provider's rated forecast. SMHI, Open-Meteo and
-   Holfuy stay "kommande" and never get invented numbers. */
+   Hours and windows are the active provider's rated forecast. */
 (function () {
   const DIRS = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
   const SV = {N:"N", NNE:"NNO", NE:"NO", ENE:"ONO", E:"O", ESE:"OSO", SE:"SO", SSE:"SSO", S:"S", SSW:"SSV", SW:"SV", WSW:"VSV", W:"V", WNW:"VNV", NW:"NV", NNW:"NNV"};
@@ -140,7 +139,7 @@
       ? ` Favoriter: ${favWins.map(w => `<b>${esc(SITES[w.site].name)} ${w.score}</b>`).join(", ")}.`
       : " Inga favoriter flygbara.";
     if (day.leadDays > 0 && ws.every(w => w.gust == null)) text += " Byar saknas så här långt fram.";
-    return text + ` <span class="badge ex">AI-sammanfattning · kommande</span>`;
+    return text;
   }
 
   function renderHero() {
@@ -348,8 +347,6 @@
     };
     const repeated = cols.some(c => c.rec && c.rec.repeated);
     const outside = sn && sn.rise && sn.set && (w.fromHour < hm(sn.rise) - 0.02 || w.toHour >= hm(sn.set));
-    const live = (D.sources || []).find(src => src.status === "live");
-    const coming = (D.sources || []).filter(src => src.status !== "live");
     const gustLine = w.gust != null
       ? `Byar ${fmt(w.gust)}${launch.gustMax != null ? ` / max ${fmt(launch.gustMax)} m/s` : " m/s"}`
       : "Byar saknas";
@@ -401,17 +398,8 @@
         <div class="stat"><div class="cap">Nederbörd</div><div class="v">${fmt(w.precipMin)}–${fmt(w.precipMax)}<small> mm</small></div></div>
         <div class="stat"><div class="cap">Regnrisk</div><div class="v">${fmt(w.precipProb)}<small> %</small></div></div>
         <div class="stat"><div class="cap">Tryck</div><div class="v">${fmt(w.pressure)}<small> hPa</small></div></div>
-      </div><div class="note">Luftfuktighet ${fmt(w.humidity)} %. ${w.cloudBaseCalculated ? "Molnbas är beräknad ur temp − daggpunkt (≈125 m/°C) över startplatsen." : "Molnbas kunde inte beräknas."}</div></div></div>
-      <div class="card"><div class="card-h"><span class="cap">Källor</span><span class="badge ex">Övriga källor · kommande</span></div><div class="card-b">
-        <div class="srcs">${(D.sources || []).map(src => src.status === "live"
-          ? `<span class="src on"><span class="badge live">live</span>${esc(src.name)}</span>`
-          : `<span class="src off">${esc(src.id === "holfuy" && s.holfuy ? src.name + " #" + s.holfuy : src.name)} · kommande</span>`).join("")}</div>
-        <table class="st num"><thead><tr><th>Källa</th><th>Vind</th><th>Byar</th><th>Riktn.</th><th>Betyg</th></tr></thead><tbody>
-          <tr><td>${esc(live ? live.name : D.activeSource)}</td><td>${fmt(w.wind)}</td><td>${fmt(w.gust)}</td><td>${name ? SV[name] : "–"}</td><td>${w.score}</td></tr>
-          ${coming.map(src => `<tr><td>${esc(src.name)}</td><td class="coming">kommande</td><td class="coming">kommande</td><td class="coming">kommande</td><td class="coming">kommande</td></tr>`).join("")}
-        </tbody></table>
-        <div class="note">Fler prognoskällor kan kopplas in senare. Kommande källor har inga värden.</div>
-      </div></div>
+      </div>
+      <div class="note">Luftfuktighet ${fmt(w.humidity)} %. ${w.cloudBaseCalculated ? "Molnbas är beräknad ur temp − daggpunkt (≈125 m/°C) över startplatsen." : "Molnbas kunde inte beräknas."}</div></div></div>
     </div>`;
   }
 
@@ -429,12 +417,15 @@
     document.getElementById("tbSource").innerHTML = `Källa: <b style="color:var(--t1);font-weight:600">${esc(liveName)}</b>`;
     document.getElementById("mUpdated").textContent = `● ${D.updatedTime || ""}`;
     document.getElementById("regionLabel").textContent = D.regionName || "Region";
-    document.getElementById("sourceBadges").innerHTML = (D.sources || []).map(s => s.status === "live"
-      ? `<span class="badge live">● ${esc(s.name)}</span>`
-      : `<span class="badge">${esc(s.name)}</span>`).join("");
+    document.getElementById("sourceBadges").innerHTML = (D.sources || [])
+      .filter(s => s.status === "live")
+      .map(s => `<span class="badge live">● ${esc(s.name)}</span>`)
+      .join("");
     document.getElementById("updatedLine").innerHTML = `Uppdaterad ${esc(D.updatedTime)} · ${esc(D.updatedDate)}<br>En tjänst från <a href="https://hangflyg.se" style="color:inherit">Stockholms Hängflygklubb</a>`;
     const yr = (D.sources || []).find(s => s.id === "yr");
-    document.getElementById("foot").innerHTML = `Väderdata från <a href="${esc((yr && yr.url) || "https://www.yr.no")}">${esc(liveName)}</a>${yr && yr.license ? ` (${esc(yr.license)})` : ""}, hämtad ${esc(D.updatedDate)} ${esc(D.updatedTime)}. Flygfönster är trimmade till lokal soluppgång och solnedgång. Molnbas är beräknad ur temperatur minus daggpunkt. Säkerhet är en prognoslängdsindikator, inte modellspridning.<br>SMHI, Open-Meteo och Holfuy är markerade <b>kommande</b> och har inga värden.`;
+    const sourceUrl = (live && live.url) || (yr && yr.url) || "https://www.yr.no";
+    const license = (live && live.license) || (yr && yr.license);
+    document.getElementById("foot").innerHTML = `Väderdata från <a href="${esc(sourceUrl)}">${esc(liveName)}</a>${license ? ` (${esc(license)})` : ""}, hämtad ${esc(D.updatedDate)} ${esc(D.updatedTime)}. Flygfönster är trimmade till lokal soluppgång och solnedgång. Molnbas är beräknad ur temperatur minus daggpunkt. Säkerhet är en prognoslängdsindikator, inte modellspridning.`;
   }
 
   function renderAll() {

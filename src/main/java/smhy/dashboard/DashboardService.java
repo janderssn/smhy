@@ -102,8 +102,7 @@ public class DashboardService {
                 .notes(List.of(
                         "Flygfönster är trimmade till lokal soluppgång och solnedgång.",
                         "Säkerhet är en prognoslängdsindikator, inte spridning mellan modeller.",
-                        "Molnbas är beräknad ur temperatur minus daggpunkt (cirka 125 m per grad).",
-                        "SMHI, Open-Meteo och Holfuy är inte inkopplade och har inga värden."))
+                        "Molnbas är beräknad ur temperatur minus daggpunkt (cirka 125 m per grad)."))
                 .sources(forecastSourceCatalog.sources())
                 .days(days)
                 .sites(sites)
@@ -158,7 +157,6 @@ public class DashboardService {
                 .latitude(parseDouble(location.getLatitude()))
                 .longitude(parseDouble(location.getLongitude()))
                 .altitude((int) Math.round(parseDouble(location.getAltitude())))
-                .holfuy(holfuyId(location.getStation()))
                 .launch(launch)
                 .sun(sun)
                 .windows(windows)
@@ -294,17 +292,6 @@ public class DashboardService {
         }
         Locale swedish = Locale.forLanguageTag("sv-SE");
         return slug.substring(0, 1).toUpperCase(swedish) + slug.substring(1);
-    }
-
-    private static Integer holfuyId(String station) {
-        if (station == null || !station.startsWith("holfuy:")) {
-            return null;
-        }
-        try {
-            return Integer.valueOf(station.substring("holfuy:".length()));
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 
     private static Optional<double[]> parseCoordinates(ForecastLocation location) {

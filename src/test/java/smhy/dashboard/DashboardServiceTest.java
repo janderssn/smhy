@@ -108,7 +108,7 @@ class DashboardServiceTest {
     }
 
     @Test
-    void comingSourcesHaveNoLiveStatusAndFavoritesAreTheThreeHills() {
+    void liveSourceIsYrAndFavoritesAreTheThreeHills() {
         Dashboard dashboard = dashboardService.build(LocalDate.of(2026, 10, 20));
 
         assertEquals(1, dashboard.getSchema());
@@ -116,10 +116,10 @@ class DashboardServiceTest {
         assertEquals("se/stockholm", dashboard.getRegionView());
         assertEquals("Stockholm", dashboard.getRegionName());
         assertEquals(List.of("areskutan", "alleberg", "kaseberga"), dashboard.getDefaultFavorites());
+        assertEquals(1, dashboard.getSources().size());
+        assertEquals("yr", source(dashboard, "yr").getId());
         assertEquals("live", source(dashboard, "yr").getStatus());
-        assertEquals("coming", source(dashboard, "smhi").getStatus());
-        assertEquals("coming", source(dashboard, "open-meteo").getStatus());
-        assertEquals("coming", source(dashboard, "holfuy").getStatus());
+        assertEquals("https://www.yr.no", source(dashboard, "yr").getUrl());
         assertEquals(3, dashboard.getDays().get(0).getConfidence());
         assertEquals("Hög säkerhet", dashboard.getDays().get(0).getConfidenceLabel());
         assertEquals("lead-time", dashboard.getDays().get(0).getConfidenceBasis());
@@ -127,12 +127,9 @@ class DashboardServiceTest {
         Dashboard.Launch areskutan = site(dashboard, "areskutan").getLaunch();
         assertTrue(areskutan.getGood().containsAll(List.of("SSW", "S", "SSE", "SE")));
         assertFalse(areskutan.getGood().contains("NW"));
-        assertNull(site(dashboard, "granholmstoppen").getHolfuy());
-        assertEquals(302, site(dashboard, "areskutan").getHolfuy());
-        assertNull(site(dashboard, "salanda").getHolfuy());
         assertEquals("Jönköping", site(dashboard, "alleberg").getRegionName());
         assertTrue(site(dashboard, "alleberg").getWindows().isEmpty());
-        assertTrue(dashboard.getNotes().stream().anyMatch(note -> note.contains("SMHI")));
+        assertTrue(dashboard.getNotes().stream().noneMatch(note -> note.contains("SMHI") || note.contains("Holfuy") || note.contains("Open-Meteo")));
     }
 
     private static Dashboard.Site site(Dashboard dashboard, String id) {
