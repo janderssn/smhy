@@ -1,0 +1,37 @@
+# Destroys the pull request preview when the pull request closes.
+# bannerbror gates this on the preview label; that skips cleanup if the label
+# was removed first. This job only checks that the branch lives in this
+# repository, then destroys the app when it exists.
+name: Preview cleanup
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: read
+
+jobs:
+  destroy:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: preview-${{ github.event.number }}
+      cancel-in-progress: false
+    steps:
+      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1
+      - name: Destroy preview app
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${FLY_API_TOKEN}" ]; then
+            echo "FLY_API_TOKEN is not set; nothing to destroy."
+            exit 0
+          fi
+          APP="smhy-pr-${{ github.event.number }}"
+          if flyctl status -a "$APP" >/dev/null 2>&1; then
+            flyctl apps destroy "$APP" --yes
+          else
+            echo "No preview app ${APP}"
+          fi

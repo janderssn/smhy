@@ -1,28 +1,217 @@
+# CI for pull requests, production deploys, and named env apps.
+#
+# Adapted from janderssn/bannerbror (ci.yml, preview-cleanup.yml) and
+# janderssn/warehouse (PR checks, then Fly deploy on main / env/*):
+# - pull requests from this repository run test, lint, and screenshot checks
+# - a newer push to the same pull request cancels the older run
+# - pushes to master and env/* are not cancelled by each other
+# - master deploys the existing Fly app "smhy" (no DNS change)
+# - env/<name> deploys a separate app smhy-<name>
+# - pull requests deploy a static preview app smhy-pr-<number>
+# Draft pull requests are included. bannerbror skips drafts to save minutes;
+# this repository runs them so a draft still has to go green.
 name: CI
+
 on:
   push:
-    branches:
-      - master
+    branches: [master, "env/*"]
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || format('{0}-{1}', github.ref, github.run_id) }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  test:
+    name: test
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-      - name: Set up JDK 25
-        uses: actions/setup-java@v5
         with:
-          distribution: 'temurin'
-          java-version: '25'
+          persist-credentials: false
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
           architecture: x64
-          cache: 'maven'
-      - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots package
-      - name: Upload coverage to Codecov
+          cache: maven
+      - name: Unit tests
+        run: mvn --batch-mode test
+      - name: Upload coverage
+        if: ${{ !cancelled() }}
         uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - name: Deploy to Fly.io
-        run: flyctl deploy
+          fail_ci_if_error: false
+
+  ui:
+    name: ui
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+          architecture: x64
+          cache: maven
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+      - name: Syntax-check the frontend
+        run: |
+          node --check src/main/resources/assets/app.js
+          node --check src/main/resources/assets/sweden.js
+      - name: Package
+        run: mvn --batch-mode -DskipTests package
+      - name: Generate the site from yr.no
+        timeout-minutes: 15
+        run: java -jar target/*.jar --all
+      - name: Install Playwright
+        working-directory: e2e
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Screenshot tests at 1440 and 390
+        working-directory: e2e
+        env:
+          CI: "true"
+        run: npx playwright test
+      - name: Stage generated site
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+        run: |
+          rm -rf preview-site
+          mkdir preview-site
+          cp -a /tmp/smhy/. preview-site/
+      - name: Upload screenshots
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-screenshots
+          path: e2e/proof/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload generated site
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview-site
+          path: preview-site/
+          if-no-files-found: error
+          retention-days: 2
+
+  preview:
+    name: preview
+    needs: [test, ui]
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: preview-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    outputs:
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: preview-site
+          path: preview-context/site
+      - name: Stage preview image
+        run: |
+          cp Dockerfile.preview nginx.preview.conf fly.preview.toml preview-context/
+      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1
+      - name: Deploy preview
+        id: deploy
+        working-directory: preview-context
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${FLY_API_TOKEN}" ]; then
+            echo "FLY_API_TOKEN is not available to this workflow. Preview was not deployed." | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "url=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          APP="smhy-pr-${{ github.event.pull_request.number }}"
+          if ! flyctl status -a "$APP" >/dev/null 2>&1; then
+            flyctl apps create "$APP"
+          fi
+          flyctl deploy -a "$APP" -c fly.preview.toml --remote-only
+          URL="https://${APP}.fly.dev"
+          echo "url=${URL}" >> "$GITHUB_OUTPUT"
+          echo "Preview: ${URL}" | tee -a "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    name: deploy
+    needs: [test, ui]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: deploy-smhy
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+          architecture: x64
+          cache: maven
+      - name: Package
+        run: mvn --batch-mode -DskipTests package
+      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1
+      - name: Deploy production app smhy
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: flyctl deploy --remote-only
+
+  deploy-env:
+    name: deploy-env
+    needs: [test, ui]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/env/')
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: deploy-${{ github.ref }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+          architecture: x64
+          cache: maven
+      - name: Package
+        run: mvn --batch-mode -DskipTests package
+      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1
+      - name: Deploy named env app
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          ENV_NAME="${GITHUB_REF_NAME#env/}"
+          if ! printf '%s' "$ENV_NAME" | grep -Eq '^[a-z0-9]([a-z0-9-]{0,30}[a-z0-9])?$'; then
+            echo "Env branch suffix must already be a Fly app suffix (lowercase letters, digits, hyphens): ${ENV_NAME}"
+            exit 1
+          fi
+          APP="smhy-${ENV_NAME}"
+          if ! flyctl status -a "$APP" >/dev/null 2>&1; then
+            flyctl apps create "$APP"
+            flyctl volumes create smhy_data --app "$APP" --region arn --size 1 --yes
+          fi
+          flyctl deploy -a "$APP" --remote-only
+          echo "Env app: https://${APP}.fly.dev" | tee -a "$GITHUB_STEP_SUMMARY"

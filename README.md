@@ -88,3 +88,15 @@ python3 -m http.server 8080 --directory /tmp/smhy
 ```
 
 `index.html` is the week, `helg.html` the weekend, `favoriter.html` favourites, and `stockholm.html` the configured region. The page reads `dashboard.json` (schema 1) beside it. SMHI, Open-Meteo and Holfuy are listed as coming and have no numbers.
+
+### Checks
+
+GitHub Actions (`.github/workflows/build.yml`) runs on every pull request and on pushes to `master` and `env/*`:
+
+- `test` — `mvn test`
+- `ui` — syntax-checks the frontend, runs `java -jar … --all` against yr.no, then Playwright at 1440×900 and 390×844
+- `preview` — pull requests from this repository publish that generated site to `https://smhy-pr-<number>.fly.dev`. Closing the pull request deletes the app.
+- `deploy` — a push to `master` deploys the existing Fly app `smhy`. This does not change DNS for smhy.se.
+- `deploy-env` — a push to `env/<name>` deploys a separate app `smhy-<name>`
+
+`FLY_API_TOKEN` has to be allowed to create and destroy apps for previews and `env/*` deploys. A token scoped only to the app `smhy` can still deploy production, and the preview job reports that it could not create the preview.
