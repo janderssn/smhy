@@ -5,10 +5,12 @@ import org.junit.jupiter.api.Test;
 import smhy.conditions.ForecastCondition;
 import smhy.conditions.WindDirection;
 import smhy.forecasts.WeatherForecast;
+import smhy.locations.ForecastLocation;
 
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
@@ -137,7 +139,7 @@ class ForecastRatingServiceTest extends AbstractForecastRatingTest {
     }
 
     @Test
-    void rateForecastTimeOfDayMinShouldTakePrecedenceOverSunrise() {
+    void rateForecastShouldNotPassBeforeSunriseEvenWhenTimeOfDayAllows() {
         Instant now = Instant.now(clock);
         ForecastCondition condition = conditionBuilder
                 .timeOfDayMin(now.atZone(ZoneId.of("Europe/Stockholm")).minus(1,ChronoUnit.HOURS).get(ChronoField.HOUR_OF_DAY))
@@ -147,11 +149,11 @@ class ForecastRatingServiceTest extends AbstractForecastRatingTest {
                 .build();
         weatherForecast.setSunrise(LocalTime.from(now.atZone(ZoneId.of("Europe/Stockholm")).plus(1,ChronoUnit.HOURS)));
         weatherForecast.setSunset(LocalTime.from(now.atZone(ZoneId.of("Europe/Stockholm")).plus(1,ChronoUnit.HOURS)));
-        assertEquals(1.0, score(List.of(condition), weatherForecast, forecastItem));
+        assertEquals(0.0, score(List.of(condition), weatherForecast, forecastItem));
     }
 
     @Test
-    void rateForecastTimeOfDayMaxShouldTakePrecedenceOverSunset() {
+    void rateForecastShouldNotPassAfterSunsetEvenWhenTimeOfDayAllows() {
         Instant now = Instant.now(clock);
         ForecastCondition condition = conditionBuilder
                 .timeOfDayMax(now.atZone(ZoneId.of("Europe/Stockholm")).plus(1,ChronoUnit.HOURS).get(ChronoField.HOUR_OF_DAY))
@@ -161,7 +163,7 @@ class ForecastRatingServiceTest extends AbstractForecastRatingTest {
                 .build();
         weatherForecast.setSunrise(LocalTime.from(now.atZone(ZoneId.of("Europe/Stockholm")).minus(1,ChronoUnit.HOURS)));
         weatherForecast.setSunset(LocalTime.from(now.atZone(ZoneId.of("Europe/Stockholm")).minus(1,ChronoUnit.HOURS)));
-        assertEquals(1.0, score(List.of(condition), weatherForecast, forecastItem));
+        assertEquals(0.0, score(List.of(condition), weatherForecast, forecastItem));
     }
 
     // --- Empty conditions ---
@@ -347,5 +349,26 @@ class ForecastRatingServiceTest extends AbstractForecastRatingTest {
                 forecastRatingService.rateForecastItemUsingConditions(weatherForecast, forecastItem, List.of(conditionA, conditionB));
         assertTrue(result.isPresent());
         assertEquals("locationB", result.get().getLocation());
+    }
+
+    @Test
+    void rateForecastUsesSiteSunriseWhenForecastHasNoSunTimes() {
+        weatherForecast.setForecastLocation(ForecastLocation.builder()
+                .id("granholmstoppen")
+                .latitude("59.4")
+                .longitude("17.86667")
+                .build());
+        weatherForecast.setSunrise(null);
+        weatherForecast.setSunset(null);
+        ForecastCondition condition = conditionBuilder
+                .timeOfDayMin(0)
+                .timeOfDayMax(23)
+                .build();
+        ZoneId stockholm = ZoneId.of("Europe/Stockholm");
+        Instant beforeSunrise = ZonedDateTime.of(2022, 7, 1, 2, 0, 0, 0, stockholm).toInstant();
+        Instant noon = ZonedDateTime.of(2022, 7, 1, 12, 0, 0, 0, stockholm).toInstant();
+
+        assertEquals(0.0, score(List.of(condition), forecastBuilder.time(beforeSunrise).build()));
+        assertEquals(1.0, score(List.of(condition), forecastBuilder.time(noon).build()));
     }
 }

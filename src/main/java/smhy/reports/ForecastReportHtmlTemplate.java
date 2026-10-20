@@ -6,13 +6,11 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import smhy.ratings.ForecastRating;
-import smhy.ratings.ForecastRatingCollector;
 
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.nio.file.Path;
-import java.time.ZoneId;
 import java.util.Locale;
 import java.util.Map;
 
@@ -34,13 +32,24 @@ public class ForecastReportHtmlTemplate {
     }
 
     public void generate(ForecastRating forecastRating, PrintStream printStream) {
-        templateEngine.process("forecast",
+        templateEngine.process("app",
                 new Context(Locale.getDefault(),
-                        Map.of( "forecast", forecastRating,
-                                "forecastDateCET", forecastRating.getForecastDate().atZone(ZoneId.of("CET")),
-                                "ratingsByDate", ForecastRatingCollector.ratingsByDay(forecastRating),
-                                "page", forecastRating.getForecastLocation())),
+                        Map.of("view", viewOf(forecastRating),
+                                "page", forecastRating.getForecastLocation() == null ? "Vecka" : forecastRating.getForecastLocation())),
                 new PrintWriter(printStream));
+    }
+
+    private static String viewOf(ForecastRating forecastRating) {
+        String location = forecastRating.getForecastLocation();
+        if (location == null) {
+            return "vecka";
+        }
+        return switch (location.toLowerCase(Locale.ROOT)) {
+            case "vecka" -> "vecka";
+            case "helg" -> "helg";
+            case "favoriter" -> "favoriter";
+            default -> "region";
+        };
     }
 
 }

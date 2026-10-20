@@ -50,7 +50,9 @@ public class WindChecker {
             return false;
         }
 
-        if (Math.round(forecastItem.getWindGusts()) > condition.getWindGustMax()) {
+        Double gusts = forecastItem.getWindGusts();
+        if (gusts != null && condition.getWindGustMax() != null
+                && Math.round(gusts) > condition.getWindGustMax()) {
             return false;
         }
 

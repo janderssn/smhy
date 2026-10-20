@@ -77,3 +77,26 @@ The following secrets need to be added in repository settings:
 ```bash
 java -jar target/*.jar --forecast --locations salanda alleberg
 ```
+
+### View the UI
+
+`--reports` or `--all` writes the HTML pages and `dashboard.json` to `smhy.output.dir` (`/tmp/smhy` locally). Serve that directory and open `index.html`:
+
+```bash
+java -jar target/*.jar --all
+python3 -m http.server 8080 --directory /tmp/smhy
+```
+
+`index.html` is the week, `helg.html` the weekend, `favoriter.html` favourites, and `stockholm.html` the configured region. The page reads `dashboard.json` (schema 1) beside it. The dashboard lists only the provider that supplied the numbers (`yr.no` unless `smhy.provider=smhi`).
+
+### Checks
+
+GitHub Actions (`.github/workflows/build.yml`) runs on every pull request and on pushes to `master` and `env/*`:
+
+- `test` — `mvn test`
+- `ui` — syntax-checks the frontend, runs `java -jar … --all` against yr.no, then Playwright at 1440×900 and 390×844
+- `preview` — pull requests from this repository publish that generated site to `https://smhy-pr-<number>.fly.dev`. Closing the pull request deletes the app.
+- `deploy` — a push to `master` deploys the existing Fly app `smhy`. This does not change DNS for smhy.se.
+- `deploy-env` — a push to `env/<name>` deploys a separate app `smhy-<name>`
+
+`FLY_API_TOKEN` has to be allowed to create and destroy apps for previews and `env/*` deploys. A token scoped only to the app `smhy` can still deploy production. If Fly refuses `apps create`, the preview job records that and does not fail the unit or screenshot checks.

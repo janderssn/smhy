@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="sv" xmlns:th="http://www.thymeleaf.org" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title th:text="|SMHY · ${page}|">SMHY · Flygväder</title>
+<link href="assets/favicon-96x96.png" sizes="96x96" rel="icon" type="image/png">
+<link href="assets/favicon-32x32.png" sizes="32x32" rel="icon" type="image/png">
+<link href="assets/favicon-16x16.png" sizes="16x16" rel="icon" type="image/png">
+<link rel="stylesheet" href="assets/app.css">
+<script>
+(function () {
+  try {
+    var t = localStorage.getItem("smhy-theme");
+    if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;
+  } catch (e) {}
+})();
+</script>
+<script th:inline="javascript">
+  window.SMHY_VIEW = /*[[${view}]]*/ "vecka";
+</script>
+</head>
+<body>
+<div class="app">
+  <nav class="sidebar" aria-label="Navigering">
+    <div class="logo" style="padding:2px 8px"><span class="logo-mark"><svg width="15" height="12" viewBox="0 0 52 40"><path d="M2 20 L26 4 L50 20 L26 14 Z" fill="var(--bg)"/></svg></span>SMHY<span class="muted" style="font-weight:500;font-size:12px;margin-left:2px">Flygväder</span></div>
+    <button class="search" data-cmdk type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>Sök plats…<span class="kbd">⌘K</span></button>
+    <div class="sb-sec">
+      <button class="sb-item" type="button" data-view="vecka"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Vecka<span class="r muted num" id="cntVecka"></span></button>
+      <button class="sb-item" type="button" data-view="helg"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Helg<span class="r muted num" id="cntHelg"></span></button>
+      <button class="sb-item" type="button" data-view="favoriter"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/></svg>Favoriter<span class="r muted num" id="cntFav"></span></button>
+      <button class="sb-item" type="button" data-view="region"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span id="regionLabel">Stockholm</span></button>
+    </div>
+    <div class="sb-sec"><div class="cap">Favoriter</div><div id="sbFav"></div></div>
+    <div class="sb-sec"><div class="cap">Alla platser <span class="spacer"></span><span id="sbDay" style="text-transform:none;letter-spacing:0;font-weight:500"></span></div><div id="sbAll"></div></div>
+    <div class="sb-foot">
+      <div id="sourceBadges" style="display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap"></div>
+      <div id="updatedLine">Uppdaterad</div>
+      <div style="margin-top:10px"><button class="iconbtn" type="button" data-theme-toggle title="Byt tema" style="width:auto;padding:0 10px;height:30px;font-size:12px;gap:6px;display:inline-flex;align-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>Mörkt / ljust</button></div>
+    </div>
+  </nav>
+
+  <main class="main" id="main">
+    <header class="mhead">
+      <div class="logo"><span class="logo-mark"><svg width="15" height="12" viewBox="0 0 52 40"><path d="M2 20 L26 4 L50 20 L26 14 Z" fill="var(--bg)"/></svg></span>SMHY</div>
+      <span class="badge live" id="mUpdated" style="margin-left:2px">●</span>
+      <div class="spacer"></div>
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Byt tema"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></button>
+      <button class="iconbtn" type="button" data-cmdk aria-label="Sök plats"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
+    </header>
+    <div class="topbar dsk">
+      <span class="title" id="tbTitle">Vecka</span><span class="muted" id="tbRange"></span>
+      <span class="spacer"></span>
+      <span class="muted" style="font-size:12px">Byt dag</span><span class="kbd">←</span><span class="kbd">→</span>
+      <span class="badge" id="tbSource" style="padding:4px 8px">Källa</span>
+    </div>
+
+    <section class="hero">
+      <div class="eyebrow"><span id="heroDay">Laddar prognos…</span><span class="conf" id="heroConf" title="Beräknad ur prognoslängd, inte modellspridning"></span><span id="heroConfT"></span></div>
+      <h1 id="heroTitle"></h1>
+      <p class="sum" id="heroSum"></p>
+      <div class="kpis" id="kpis"></div>
+    </section>
+
+    <section class="section">
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px"><span class="cap">Kommande 10 dagar</span><span class="muted" style="font-size:12px">Bästa betyg per dag</span></div>
+      <div class="scrub" id="scrub" role="toolbar" aria-label="Välj dag"></div>
+    </section>
+
+    <section class="section">
+      <div class="split">
+        <div class="card" id="mapCard">
+          <div class="card-h"><span class="cap">Karta</span><span class="spacer"></span><span class="muted" style="font-size:11.5px" id="mapDay"></span></div>
+          <div class="card-b" style="padding-top:6px"><div class="map" id="map"></div></div>
+        </div>
+        <div class="card" id="listCard">
+          <div class="card-h"><span class="cap" id="listTitle">Flygbart</span><span class="spacer"></span><span class="muted" style="font-size:11.5px">Fönster · dagsljus</span></div>
+          <div class="rows" id="rows" style="margin-top:6px"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section mob" id="favSec">
+      <div class="card"><div class="card-h"><span class="cap">★ Favoriter</span><span class="spacer"></span><span class="muted" style="font-size:11.5px">10 dagar</span></div><div id="favs" style="margin-top:6px"></div></div>
+    </section>
+
+    <section class="section">
+      <div class="card">
+        <div class="card-h" style="flex-wrap:wrap;row-gap:8px"><span class="cap">Veckan per plats</span><span class="spacer"></span>
+          <div class="seg" role="group" aria-label="Mått" id="seg">
+            <button type="button" data-metric="score" aria-pressed="true">Betyg</button>
+            <button type="button" data-metric="wind" aria-pressed="false">Vind</button>
+            <button type="button" data-metric="temp" aria-pressed="false">Temp</button>
+            <button type="button" data-metric="cb" aria-pressed="false">Molnbas</button>
+          </div></div>
+        <div class="card-b"><div class="mx"><table id="mx"></table></div><div class="legend" id="legend"></div></div>
+      </div>
+    </section>
+
+    <footer class="foot" id="foot"></footer>
+  </main>
+
+  <aside class="inspector" id="inspector" aria-label="Platsdetaljer"></aside>
+</div>
+
+<nav class="bnav" aria-label="Huvudmeny">
+  <button type="button" aria-current="true" data-go="top"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/></svg>Översikt</button>
+  <button type="button" data-go="mapCard"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg>Karta</button>
+  <button type="button" data-go="favSec"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/></svg>Favoriter</button>
+  <button type="button" data-cmdk><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>Sök</button>
+</nav>
+
+<div class="cmdk-bg" id="cmdkBg"><div class="cmdk" role="dialog" aria-label="Sök plats"><input id="cmdkIn" placeholder="Sök plats, region…" autocomplete="off"><ul id="cmdkList"></ul></div></div>
+<div class="tip" id="tip"></div>
+<script src="assets/sweden.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

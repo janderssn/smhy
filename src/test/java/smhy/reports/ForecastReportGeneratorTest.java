@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.PathResource;
 import org.springframework.test.util.ReflectionTestUtils;
+import smhy.dashboard.DashboardService;
 import smhy.forecasts.InMemoryForecastStore;
 import smhy.locations.ForecastLocation;
 import smhy.locations.ForecastLocationService;
@@ -45,6 +46,9 @@ class ForecastReportGeneratorTest {
     @Mock
     private ForecastReportJsonGenerator forecastReportJsonGenerator;
 
+    @Mock
+    private DashboardService dashboardService;
+
     private ForecastReportGenerator generator;
 
     @BeforeEach
@@ -54,7 +58,8 @@ class ForecastReportGeneratorTest {
                 forecastStore,
                 forecastRatingService,
                 forecastReportHtmlTemplate,
-                forecastReportJsonGenerator
+                forecastReportJsonGenerator,
+                dashboardService
         );
 
         ReflectionTestUtils.setField(generator, "htmlOutputDirectory", new PathResource(tempDir));
