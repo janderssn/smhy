@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 import smhy.locations.ForecastLocation;
 import smhy.locations.ForecastLocationService;
 
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoField;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -30,14 +28,7 @@ public class ForecastRatingService {
     private final CalendarChecker calendarChecker;
 
     public ForecastRating rateForecast(WeatherForecast forecast) {
-
-        List<ForecastCondition> conditions = forecastConditionService.findByLocation(forecast.getForecastLocation().getId());
-        List<WeatherForecast.WeatherForecastItem> items = forecastInterpolator.interpolate(forecast.getItems());
-        List<ForecastRating.SiteRating> ratings = items.stream()
-                .flatMap(forecastItem -> rateForecastItemUsingConditions(forecast, forecastItem, conditions).stream())
-                .toList();
-
-
+        List<ForecastRating.SiteRating> ratings = rateHourly(forecast);
         Collection<ForecastRating.SiteRating> aggregateRatings = forecastRatingAggregator.aggregateRatings(ratings);
         aggregateRatings.forEach(this::prettyfy);
 
@@ -45,6 +36,51 @@ public class ForecastRatingService {
                 .forecastDate(forecast.getForecastDate())
                 .forecastLocation(forecast.getForecastLocation().getId())
                 .siteRatings(aggregateRatings)
+                .build();
+    }
+
+    /**
+     * One rating per interpolated forecast hour. Score is 0 when the hour does not match a condition.
+     * Weather values on the rating are the hour's own values, including a null gust when the provider omitted it.
+     */
+    public List<ForecastRating.SiteRating> rateHourly(WeatherForecast forecast) {
+        if (forecast.getItems() == null || forecast.getItems().isEmpty()) {
+            return List.of();
+        }
+        List<ForecastCondition> conditions = forecastConditionService.findByLocation(forecast.getForecastLocation().getId());
+        List<WeatherForecast.WeatherForecastItem> items = forecastInterpolator.interpolate(forecast.getItems());
+        return items.stream()
+                .map(forecastItem -> rateForecastItemUsingConditions(forecast, forecastItem, conditions)
+                        .orElseGet(() -> emptyRating(forecast, forecastItem)))
+                .toList();
+    }
+
+    private ForecastRating.SiteRating emptyRating(WeatherForecast forecast, WeatherForecast.WeatherForecastItem forecastItem) {
+        int hourOfDay = TimeOfDayChecker.getHourOfDay(forecastItem);
+        return ForecastRating.SiteRating.builder()
+                .location(forecast.getForecastLocation().getId())
+                .time(forecastItem.getTime())
+                .score(0d)
+                .windDirectionMin(forecastItem.getWindDirection())
+                .windDirectionMax(forecastItem.getWindDirection())
+                .windSpeedMin(forecastItem.getWindSpeed())
+                .windSpeedMax(forecastItem.getWindSpeed())
+                .windGustMax(forecastItem.getWindGusts())
+                .timeOfDayMin(hourOfDay)
+                .timeOfDayMax(hourOfDay)
+                .airTemperatureMin(forecastItem.getAirTemperature())
+                .airTemperatureMax(forecastItem.getAirTemperature())
+                .airPressureMin(forecastItem.getAirPressure())
+                .airPressureMax(forecastItem.getAirPressure())
+                .relativeHumidityMin(forecastItem.getRelativeHumidity())
+                .relativeHumidityMax(forecastItem.getRelativeHumidity())
+                .dewPointTemperatureMin(forecastItem.getDewPointTemperature())
+                .dewPointTemperatureMax(forecastItem.getDewPointTemperature())
+                .precipitationAmountMin(forecastItem.getPrecipitationAmountMin())
+                .precipitationAmountMax(forecastItem.getPrecipitationAmountMax())
+                .probabilityPrecipitationMin(forecastItem.getProbabilityPrecipitation())
+                .probabilityPrecipitationMax(forecastItem.getProbabilityPrecipitation())
+                .hoursMin(1.0)
                 .build();
     }
 
@@ -63,7 +99,7 @@ public class ForecastRatingService {
             WeatherForecast.WeatherForecastItem forecastItem,
             ForecastCondition condition) {
 
-        int hourOfDay = getHourOfDay(forecastItem);
+        int hourOfDay = TimeOfDayChecker.getHourOfDay(forecastItem);
 
         ForecastRating.SiteRating.SiteRatingBuilder builder = ForecastRating.SiteRating.builder()
                 .location(condition.getLocation())
@@ -113,10 +149,6 @@ public class ForecastRatingService {
         }
 
         return builder.score(condition.getScore()).build();
-    }
-
-    int getHourOfDay(WeatherForecast.WeatherForecastItem f) {
-        return f.getTime().atZone(ZoneOffset.UTC).get(ChronoField.CLOCK_HOUR_OF_DAY);
     }
 
     private ForecastRating.SiteRating max(ForecastRating.SiteRating a, ForecastRating.SiteRating b) {

@@ -48,7 +48,7 @@ public class YrWeatherForecastConverter implements Converter<ObjectNode, Weather
         return WeatherForecast.WeatherForecastItem.builder()
                 .time(convertDate(node.get("time").textValue()))
                 .windDirection(details.get("wind_from_direction").asDouble())
-                .windGusts(details.at("/wind_speed_of_gust").asDouble())
+                .windGusts(details.hasNonNull("wind_speed_of_gust") ? details.get("wind_speed_of_gust").asDouble() : null)
                 .windSpeed(details.get("wind_speed").asDouble())
                 .airPressure(details.get("air_pressure_at_sea_level").asDouble())
                 .airTemperature(details.get("air_temperature").asDouble())

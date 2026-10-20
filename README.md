@@ -77,3 +77,14 @@ The following secrets need to be added in repository settings:
 ```bash
 java -jar target/*.jar --forecast --locations salanda alleberg
 ```
+
+### View the UI
+
+`--reports` or `--all` writes the HTML pages and `dashboard.json` to `smhy.output.dir` (`/tmp/smhy` locally). Serve that directory and open `index.html`:
+
+```bash
+java -jar target/*.jar --all
+python3 -m http.server 8080 --directory /tmp/smhy
+```
+
+`index.html` is the week, `helg.html` the weekend, `favoriter.html` favourites, and `stockholm.html` the configured region. The page reads `dashboard.json` (schema 1) beside it. SMHI, Open-Meteo and Holfuy are listed as coming and have no numbers.

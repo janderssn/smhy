@@ -64,6 +64,16 @@ class WindCheckerTest {
     }
 
     @Test
+    void isWindSpeedWithinLimits_passesWhenGustsAreMissing() {
+        WeatherForecast.WeatherForecastItem missingGust = WeatherForecast.WeatherForecastItem.builder()
+                .time(Instant.parse("2022-07-01T12:00:00Z"))
+                .windDirection(0.0)
+                .windSpeed(5.0)
+                .build();
+        assertTrue(windChecker.isWindSpeedWithinLimits(missingGust, condition(0.0, 10.0, 7.0)));
+    }
+
+    @Test
     void isWindSpeedWithinLimits_passesAtExactBoundaries() {
         // speed exactly at min and max, gusts exactly at gustMax
         assertTrue(windChecker.isWindSpeedWithinLimits(item(0, 5.0, 15.0), condition(5.0, 5.0, 15.0)));

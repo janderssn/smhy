@@ -7,6 +7,7 @@ import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import smhy.dashboard.DashboardService;
 import smhy.forecasts.InMemoryForecastStore;
 import smhy.forecasts.WeatherForecast;
 import smhy.locations.ForecastLocation;
@@ -41,6 +42,7 @@ public class ForecastReportGenerator {
     private final ForecastRatingService forecastRatingService;
     private final ForecastReportHtmlTemplate forecastReportHtmlTemplate;
     private final ForecastReportJsonGenerator forecastReportJsonGenerator;
+    private final DashboardService dashboardService;
 
     @Value("${smhy.output.dir}")
     private PathResource htmlOutputDirectory;
@@ -51,10 +53,13 @@ public class ForecastReportGenerator {
     @Value("${smhy.region:}")
     private String region;
 
+    @Value("${smhy.provider:yr}")
+    private String provider = "yr";
+
     public void generate(List<String> locationIds) {
 
         Function<ForecastLocation, Optional<WeatherForecast>> findLatestForecastByLocationAndProvider = location ->
-            forecastStore.findLatestByLocation(location.getId(), "yr");
+            forecastStore.findLatestByLocation(location.getId(), provider);
 
         Collection<ForecastRating.SiteRating> ratings = forecastLocationService.findAll().stream()
                 .filter(l -> isEmpty(locationIds) || locationIds.contains(l.getId()) )
@@ -81,6 +86,14 @@ public class ForecastReportGenerator {
             forecastReportHtmlTemplate.generate(getRegion(ratings), htmlOutputPath.resolve(regionHtml));
         } catch (IOException e) {
             log.warn("failed to create html", e);
+        }
+
+        try {
+            Path htmlOutputPath = Paths.get(htmlOutputDirectory.getPath());
+            Files.createDirectories(htmlOutputPath);
+            dashboardService.write(htmlOutputPath);
+        } catch (IOException e) {
+            log.warn("failed to write dashboard", e);
         }
 
         // Generate JSON reports

@@ -59,7 +59,7 @@ public class ForecastRatingAggregator {
                 prev.timeOfDayMax = next.timeOfDayMax;
                 prev.windDirectionMax = Math.max(prev.windDirectionMax, next.windDirectionMax);
                 prev.windSpeedMax = Math.max(prev.windSpeedMax, next.windSpeedMax);
-                prev.windGustMax = Math.max(prev.windGustMax, next.windGustMax);
+                prev.windGustMax = maxNullable(prev.windGustMax, next.windGustMax);
                 prev.windDirectionMin = Math.min(prev.windDirectionMin, next.windDirectionMin);
                 prev.windSpeedMin = Math.min(prev.windSpeedMin, next.windSpeedMin);
                 prev.airTemperatureMin = Math.min(prev.airTemperatureMin, next.airTemperatureMin);
@@ -90,6 +90,16 @@ public class ForecastRatingAggregator {
      * @param rating required; non-null
      * @return Instant of day(time) + timeOfDayMin
      */
+    private static Double maxNullable(Double left, Double right) {
+        if (left == null) {
+            return right;
+        }
+        if (right == null) {
+            return left;
+        }
+        return Math.max(left, right);
+    }
+
     private Instant groupByMinTimeOfDay(ForecastRating.SiteRating rating) {
         return rating.time.truncatedTo(ChronoUnit.DAYS)
                 .plus(rating.timeOfDayMin, ChronoUnit.HOURS);

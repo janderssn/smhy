@@ -52,7 +52,7 @@ class ForecastReportHtmlTemplateTest {
 
         template.generate(rating);
 
-        verify(templateEngine).process(eq("forecast"), any(IContext.class), any(Writer.class));
+        verify(templateEngine).process(eq("app"), any(IContext.class), any(Writer.class));
     }
 
     @Test
@@ -61,7 +61,7 @@ class ForecastReportHtmlTemplateTest {
 
         template.generate(rating, System.out);
 
-        verify(templateEngine).process(eq("forecast"), any(IContext.class), any(Writer.class));
+        verify(templateEngine).process(eq("app"), any(IContext.class), any(Writer.class));
     }
 
     @Test
@@ -71,6 +71,6 @@ class ForecastReportHtmlTemplateTest {
 
         template.generate(rating, outputFile);
 
-        verify(templateEngine).process(eq("forecast"), any(IContext.class), any(Writer.class));
+        verify(templateEngine).process(eq("app"), any(IContext.class), any(Writer.class));
     }
 }
