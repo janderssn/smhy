@@ -99,4 +99,4 @@ GitHub Actions (`.github/workflows/build.yml`) runs on every pull request and on
 - `deploy` — a push to `master` deploys the existing Fly app `smhy`. This does not change DNS for smhy.se.
 - `deploy-env` — a push to `env/<name>` deploys a separate app `smhy-<name>`
 
-`FLY_API_TOKEN` has to be allowed to create and destroy apps for previews and `env/*` deploys. A token scoped only to the app `smhy` can still deploy production, and the preview job reports that it could not create the preview.
+`FLY_API_TOKEN` has to be allowed to create and destroy apps for previews and `env/*` deploys. A token scoped only to the app `smhy` can still deploy production. If Fly refuses `apps create`, the preview job records that and does not fail the unit or screenshot checks.

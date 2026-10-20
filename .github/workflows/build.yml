@@ -144,7 +144,15 @@ jobs:
           fi
           APP="smhy-pr-${{ github.event.pull_request.number }}"
           if ! flyctl status -a "$APP" >/dev/null 2>&1; then
-            flyctl apps create "$APP"
+            if ! flyctl apps create "$APP"; then
+              {
+                echo "### Preview not deployed"
+                echo "FLY_API_TOKEN is set, but Fly refused to create ${APP} (unauthorized)."
+                echo "The token can deploy an existing app. Previews need an org deploy token that may create and destroy apps in the same Fly org as smhy."
+              } | tee -a "$GITHUB_STEP_SUMMARY"
+              echo "url=" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
           fi
           flyctl deploy -a "$APP" -c fly.preview.toml --remote-only
           URL="https://${APP}.fly.dev"
