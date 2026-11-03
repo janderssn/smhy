@@ -11,7 +11,28 @@ on:
     #   - "src/**/*.jsx"
 
 jobs:
+  # The secrets context is not available in a job-level if. Record presence
+  # as an output so claude-review is skipped when no credential is configured.
+  check-anthropic-credential:
+    runs-on: ubuntu-latest
+    outputs:
+      present: ${{ steps.cred.outputs.present }}
+    steps:
+      - name: Check Anthropic credential
+        id: cred
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: |
+          if [ -n "$CLAUDE_CODE_OAUTH_TOKEN" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "CLAUDE_CODE_OAUTH_TOKEN is not set; skipping Claude review."
+          fi
+
   claude-review:
+    needs: check-anthropic-credential
+    if: needs.check-anthropic-credential.outputs.present == 'true'
     # Optional: Filter by PR author
     # if: |
     #   github.event.pull_request.user.login == 'external-contributor' ||
@@ -54,4 +75,3 @@ jobs:
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://docs.claude.com/en/docs/claude-code/cli-reference for available options
           claude_args: '--allowed-tools "Bash(gh issue view:*),Bash(gh search:*),Bash(gh issue list:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*)"'
-
