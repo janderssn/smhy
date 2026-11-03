@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+  pull_request:
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,7 +23,9 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
       - uses: superfly/flyctl-actions/setup-flyctl@master
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       - name: Deploy to Fly.io
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: flyctl deploy
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
