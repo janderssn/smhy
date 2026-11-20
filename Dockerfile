@@ -1,4 +1,4 @@
-FROM eclipse-temurin:25-jdk-alpine
+FROM eclipse-temurin:25.0.5.1_2-jdk-alpine
 
 # Install cron and nginx for serving reports
 RUN apk add --no-cache dcron nginx
